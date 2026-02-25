@@ -1,0 +1,10 @@
+architeture flow from chatgpt 
+User Input
+   ↓
+Decision Engine
+   ↓
+Scoring Algorithm
+   ↓
+Ranking + Explanation
+   ↓
+UI Result
