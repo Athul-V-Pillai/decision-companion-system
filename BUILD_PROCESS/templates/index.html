@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Companion System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Decision Companion System</h1>
+            <p>Evaluate multiple options using weighted criteria</p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <h2>Create Decision Scenario</h2>
+                
+                <!-- Options Input -->
+                <div class="form-group">
+                    <label for="optionsInput">Options (comma-separated):</label>
+                    <input 
+                        type="text" 
+                        id="optionsInput" 
+                        placeholder="e.g., Option A, Option B, Option C"
+                    >
+                    <small>Enter the options you want to compare</small>
+                </div>
+
+                <!-- Criteria Input -->
+                <div class="form-group">
+                    <label for="criteriaInput">Criteria (comma-separated):</label>
+                    <input 
+                        type="text" 
+                        id="criteriaInput" 
+                        placeholder="e.g., Price, Performance, Battery Life"
+                    >
+                    <small>Enter the criteria for evaluation</small>
+                </div>
+
+                <!-- Dynamic Weights and Types Section -->
+                <div class="form-group">
+                    <label>Weights & Criterion Types:</label>
+                    <div id="weightsContainer" class="weights-container">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Dynamic Scores Section -->
+                <div class="form-group">
+                    <label>Scores (0-10 scale):</label>
+                    <div id="scoresContainer" class="scores-container">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <button id="generateBtn" class="btn btn-primary">Generate Form</button>
+                <button id="evaluateBtn" class="btn btn-success" disabled>Evaluate Decision</button>
+                <button id="resetBtn" class="btn btn-secondary">Reset</button>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <h2>Evaluation Results</h2>
+
+                <div class="results-content">
+                    <!-- Summary -->
+                    <div class="result-box">
+                        <h3>Summary</h3>
+                        <p id="summaryText"></p>
+                    </div>
+
+                    <!-- Recommendation -->
+                    <div class="result-box">
+                        <h3>Recommendation</h3>
+                        <div id="recommendationText" class="recommendation-box"></div>
+                    </div>
+
+                    <!-- Scores Table -->
+                    <div class="result-box">
+                        <h3>Final Scores</h3>
+                        <table class="scores-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Option</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoresTableBody">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Detailed Breakdown -->
+                    <div class="result-box">
+                        <h3>Detailed Breakdown</h3>
+                        <div id="detailsContainer" class="details-container">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Methodology -->
+                    <div class="result-box">
+                        <h3>Methodology</h3>
+                        <p id="methodologyText" class="methodology-text"></p>
+                    </div>
+
+                    <!-- Ranking Explanation -->
+                    <div class="result-box">
+                        <h3>Ranking Analysis</h3>
+                        <div id="rankingExplanation" class="ranking-explanation">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <button id="backBtn" class="btn btn-primary">← Back to Input</button>
+            </section>
+
+            <!-- Error Section -->
+            <section id="errorSection" class="error-section" style="display: none;">
+                <h2>Error</h2>
+                <div class="error-box">
+                    <p id="errorText"></p>
+                </div>
+                <button id="errorBackBtn" class="btn btn-primary">← Back to Input</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Decision Companion System v1.0</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
