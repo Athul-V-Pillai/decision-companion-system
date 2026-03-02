@@ -103,4 +103,5 @@ The most important refactoring happened when I realized the evaluator was doing 
 
 6. **Keep it simple until you need it not to be:** Vanilla JavaScript was sufficient; MERN would have been premature optimization.
 
-The Decision Companion System evolved from a simple scoring tool into a practical decision support system because I stayed focused on what users actually needed: transparency, correctness, and usability.
+7.  **Start simple with version control**: Using fundamental Git commands helped track progress effectively without introducing complex branching strategies.
+
