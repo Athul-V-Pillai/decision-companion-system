@@ -339,6 +339,10 @@ Decision Companion System/
 | Vanilla JS | Frontend | Sufficient without framework | Minimal overhead |
 
 ---
+## 11 AI TOOLS USED 
+1. git-copilot (all code done from)
+2. chatgpt ( resarched)
+3. gemini ( resarched)
 
 ## CONCLUSION
 
