@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "timestamp": "2026-02-28T16:05:09.384336",
+    "timestamp": "2026-03-02T12:39:45.546935",
     "input": {
       "options": [
         "dell",
@@ -9,9 +9,9 @@
         "lenovo"
       ],
       "criteria": [
-        "price",
-        "performance",
-        "battery"
+        "Price",
+        "Performance",
+        "Battery Life"
       ],
       "weights": [
         1,
@@ -58,15 +58,15 @@
         "interpretation": "Close call: dell and hp have very similar scores"
       },
       "weights": {
-        "price": 0.3333333333333333,
-        "performance": 0.3333333333333333,
-        "battery": 0.3333333333333333
+        "Price": 0.3333333333333333,
+        "Performance": 0.3333333333333333,
+        "Battery Life": 0.3333333333333333
       }
     }
   },
   {
     "id": 2,
-    "timestamp": "2026-02-28T16:10:18.072561",
+    "timestamp": "2026-03-02T12:43:59.835453",
     "input": {
       "options": [
         "dell",
@@ -74,9 +74,9 @@
         "lenovo"
       ],
       "criteria": [
-        "price",
-        "performance",
-        "battery"
+        "Price",
+        "Performance",
+        "Battery Life"
       ],
       "weights": [
         1,
@@ -121,6 +121,380 @@
         "score": 0.0,
         "level": "Low",
         "interpretation": "Close call: dell and hp have very similar scores"
+      },
+      "weights": {
+        "Price": 0.3333333333333333,
+        "Performance": 0.3333333333333333,
+        "Battery Life": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 3,
+    "timestamp": "2026-03-02T12:49:25.228056",
+    "input": {
+      "options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "criteria": [
+        "Price",
+        "Performance",
+        "Battery Life"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "dell": [
+          5,
+          5,
+          5
+        ],
+        "hp": [
+          5,
+          5,
+          5
+        ],
+        "lenovo": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "scores": {
+        "dell": 1.0,
+        "hp": 1.0,
+        "lenovo": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: dell and hp have very similar scores"
+      },
+      "weights": {
+        "Price": 0.3333333333333333,
+        "Performance": 0.3333333333333333,
+        "Battery Life": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 4,
+    "timestamp": "2026-03-02T12:50:59.147477",
+    "input": {
+      "options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "criteria": [
+        "Price",
+        "Performance",
+        "Battery Life"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "dell": [
+          5,
+          5,
+          5
+        ],
+        "hp": [
+          5,
+          5,
+          5
+        ],
+        "lenovo": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "scores": {
+        "dell": 1.0,
+        "hp": 1.0,
+        "lenovo": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: dell and hp have very similar scores"
+      },
+      "weights": {
+        "Price": 0.3333333333333333,
+        "Performance": 0.3333333333333333,
+        "Battery Life": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 5,
+    "timestamp": "2026-03-02T12:51:43.224500",
+    "input": {
+      "options": [
+        "Laptop A",
+        "Laptop B",
+        "Laptop C"
+      ],
+      "criteria": [
+        "specs",
+        "price",
+        "built quality"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "Laptop A": [
+          5,
+          5,
+          5
+        ],
+        "Laptop B": [
+          5,
+          5,
+          5
+        ],
+        "Laptop C": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "Laptop A",
+        "Laptop B",
+        "Laptop C"
+      ],
+      "scores": {
+        "Laptop A": 1.0,
+        "Laptop B": 1.0,
+        "Laptop C": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: Laptop A and Laptop B have very similar scores"
+      },
+      "weights": {
+        "specs": 0.3333333333333333,
+        "price": 0.3333333333333333,
+        "built quality": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 6,
+    "timestamp": "2026-03-02T12:52:10.942987",
+    "input": {
+      "options": [
+        "option 1",
+        "option 2"
+      ],
+      "criteria": [
+        "price",
+        "performance",
+        "battery"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "option 1": [
+          5,
+          5,
+          5
+        ],
+        "option 2": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "option 1",
+        "option 2"
+      ],
+      "scores": {
+        "option 1": 1.0,
+        "option 2": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: option 1 and option 2 have very similar scores"
+      },
+      "weights": {
+        "price": 0.3333333333333333,
+        "performance": 0.3333333333333333,
+        "battery": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 7,
+    "timestamp": "2026-03-02T12:55:22.675407",
+    "input": {
+      "options": [
+        "option 1",
+        "option 2"
+      ],
+      "criteria": [
+        "price",
+        "performance",
+        "battery"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "option 1": [
+          5,
+          5,
+          5
+        ],
+        "option 2": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "option 1",
+        "option 2"
+      ],
+      "scores": {
+        "option 1": 1.0,
+        "option 2": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: option 1 and option 2 have very similar scores"
+      },
+      "weights": {
+        "price": 0.3333333333333333,
+        "performance": 0.3333333333333333,
+        "battery": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 8,
+    "timestamp": "2026-03-02T13:27:56.378989",
+    "input": {
+      "options": [
+        "Laptop A",
+        "Laptop B",
+        "Laptop C"
+      ],
+      "criteria": [
+        "price",
+        "performance",
+        "battery"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "Laptop A": [
+          5,
+          5,
+          5
+        ],
+        "Laptop B": [
+          5,
+          5,
+          5
+        ],
+        "Laptop C": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "Laptop A",
+        "Laptop B",
+        "Laptop C"
+      ],
+      "scores": {
+        "Laptop A": 1.0,
+        "Laptop B": 1.0,
+        "Laptop C": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: Laptop A and Laptop B have very similar scores"
       },
       "weights": {
         "price": 0.3333333333333333,

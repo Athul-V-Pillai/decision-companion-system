@@ -13,17 +13,11 @@ let state = {
 };
 
 // Chart instances for cleanup
-let scoresBarChart = null;
-let criteriaRadarChart = null;
+window.scoresBarChart = null;
+window.criteriaRadarChart = null;
 
-// Color palette for charts
-const chartColors = {
-    primary: '#3b82f6',
-    success: '#10b981',
-    warning: '#f59e0b',
-    danger: '#ef4444',
-    info: '#06b6d4'
-};
+// Store last evaluation result for export
+let lastEvaluationResult = null;
 
 // DOM Elements
 const optionsInput = document.getElementById('optionsInput');
@@ -44,6 +38,12 @@ evaluateBtn.addEventListener('click', evaluateDecision);
 resetBtn.addEventListener('click', resetForm);
 document.getElementById('backBtn').addEventListener('click', backToInput);
 document.getElementById('errorBackBtn').addEventListener('click', backToInput);
+
+// Add listeners for new buttons if they exist
+const exportPdfBtn = document.getElementById('exportPdfBtn');
+const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+if (exportPdfBtn) exportPdfBtn.addEventListener('click', exportPDF);
+if (viewHistoryBtn) viewHistoryBtn.addEventListener('click', toggleHistory);
 
 /**
  * Parse comma-separated input and trim whitespace
@@ -236,6 +236,10 @@ async function evaluateDecision() {
  * Display evaluation results
  */
 function displayResults(data) {
+    // Store evaluation result for PDF export
+    lastEvaluationResult = data;
+    console.log('displayResults called with data:', data);
+    
     inputSection.style.display = 'none';
     errorSection.style.display = 'none';
     resultsSection.style.display = 'block';
@@ -252,11 +256,17 @@ function displayResults(data) {
     // Confidence Score
     const confidenceData = data.confidence;
     const confidenceContainer = document.getElementById('confidenceContainer');
-    confidenceContainer.innerHTML = `
-        <p><strong>Confidence Score:</strong> ${confidenceData.score.toFixed(4)}</p>
-        <p><strong>Level:</strong> <span class="confidence-${confidenceData.level.toLowerCase()}">${confidenceData.level}</span></p>
-        <p><em>${confidenceData.interpretation}</em></p>
-    `;
+    console.log('Confidence data:', confidenceData);
+    if (confidenceContainer) {
+        confidenceContainer.innerHTML = `
+            <p><strong>Confidence Score:</strong> ${confidenceData.score.toFixed(4)}</p>
+            <p><strong>Level:</strong> <span class="confidence-${confidenceData.level.toLowerCase()}">${confidenceData.level}</span></p>
+            <p><em>${confidenceData.interpretation}</em></p>
+        `;
+        console.log('Confidence container updated');
+    } else {
+        console.error('Confidence container not found');
+    }
 
     // Scores table
     const tbody = document.getElementById('scoresTableBody');
@@ -331,147 +341,255 @@ function displayResults(data) {
         rankingDiv.appendChild(div);
     });
 
-    // Create visualizations
-    createScoresBarChart(data);
-    createCriteriaRadarChart(data);
+    // Create visualizations after DOM has updated
+    console.log('Creating charts...');
+    setTimeout(() => {
+        console.log('Timeout callback: Creating charts');
+        try {
+            createScoresBarChart(data);
+            createCriteriaRadarChart(data);
+        } catch (err) {
+            console.error('Chart creation error:', err);
+        }
+    }, 200);
 }
 
 /**
  * Create bar chart showing total scores per option
  */
 function createScoresBarChart(data) {
-    // Destroy existing chart if it exists
-    if (scoresBarChart) {
-        scoresBarChart.destroy();
-    }
+    try {
+        console.log('=== BAR CHART START ===');
+        console.log('Data:', data);
+        
+        // Destroy existing chart if it exists
+        if (window.scoresBarChart) {
+            console.log('Destroying existing bar chart');
+            window.scoresBarChart.destroy();
+        }
 
-    const ctx = document.getElementById('scoresBarChart');
-    if (!ctx) return;
+        // Get canvas element
+        const canvas = document.getElementById('scoresBarChart');
+        if (!canvas) {
+            console.error('❌ Canvas element scoresBarChart not found');
+            return;
+        }
+        console.log('✓ Canvas found:', canvas);
 
-    const options = data.ranked_options;
-    const scores = options.map(opt => data.scores[opt]);
+        const options = data.ranked_options;
+        const scores = options.map(opt => data.scores[opt]);
+        
+        console.log('Options:', options);
+        console.log('Scores:', scores);
 
-    // Generate colors for bars
-    const barColors = options.map((_, index) => {
-        const colorValues = Object.values(chartColors);
-        return colorValues[index % colorValues.length];
-    });
+        // Define colors
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
+        const backgroundColor = options.map((_, i) => colors[i % colors.length]);
+        const borderColor = backgroundColor.map(c => c.replace(')', ', 0.8)'));
 
-    scoresBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: options,
-            datasets: [{
-                label: 'Total Score',
-                data: scores,
-                backgroundColor: barColors,
-                borderColor: barColors.map(color => color.replace(')', ', 0.8)')),
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                title: {
-                    display: false
-                }
+        // Create chart
+        window.scoresBarChart = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: options,
+                datasets: [{
+                    label: 'Total Score',
+                    data: scores,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 1,
-                    title: {
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                indexAxis: 'x',
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Score (0-1)'
+                        position: 'top'
                     }
                 },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Options'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1,
+                        ticks: {
+                            stepSize: 0.2
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+        
+        console.log('✓ Bar chart created successfully');
+        console.log('=== BAR CHART END ===');
+    } catch (error) {
+        console.error('❌ Error creating bar chart:', error);
+        console.error('Stack:', error.stack);
+    }
 }
 
 /**
  * Create radar chart comparing criteria performance across top options
  */
 function createCriteriaRadarChart(data) {
-    // Destroy existing chart if it exists
-    if (criteriaRadarChart) {
-        criteriaRadarChart.destroy();
-    }
-
-    const ctx = document.getElementById('criteriaRadarChart');
-    if (!ctx) return;
-
-    // Get top 3 options (or fewer if less available)
-    const topOptions = data.ranked_options.slice(0, 3);
-    
-    // Extract criteria names from details
-    const firstDetails = data.details[topOptions[0]];
-    const criteria = firstDetails.criteria_breakdown.map(cb => cb.criterion);
-
-    // Create dataset for each top option showing normalized scores per criterion
-    const datasets = topOptions.map((option, index) => {
-        const details = data.details[option];
-        const normalizedScores = details.criteria_breakdown.map(cb => cb.normalized_score);
+    try {
+        console.log('=== RADAR CHART START ===');
         
-        const colorValues = Object.values(chartColors);
-        const color = colorValues[index % colorValues.length];
+        // Destroy existing chart if it exists
+        if (window.criteriaRadarChart) {
+            console.log('Destroying existing radar chart');
+            window.criteriaRadarChart.destroy();
+        }
 
-        return {
-            label: option,
-            data: normalizedScores,
-            borderColor: color,
-            backgroundColor: color.replace(')', ', 0.1)'),
-            borderWidth: 2,
-            fill: true,
-            pointRadius: 5,
-            pointBackgroundColor: color,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2
-        };
-    });
+        // Get canvas element
+        const canvas = document.getElementById('criteriaRadarChart');
+        if (!canvas) {
+            console.error('❌ Canvas element criteriaRadarChart not found');
+            return;
+        }
+        console.log('✓ Canvas found:', canvas);
 
-    criteriaRadarChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: criteria,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                title: {
-                    display: false
-                }
+        // Get top 3 options
+        const topOptions = data.ranked_options.slice(0, 3);
+        console.log('Top options:', topOptions);
+
+        // Extract criteria
+        const firstDetails = data.details[topOptions[0]];
+        const criteria = firstDetails.criteria_breakdown.map(cb => cb.criterion);
+        console.log('Criteria:', criteria);
+
+        // Define colors
+        const colors = ['#3b82f6', '#10b981', '#f59e0b'];
+
+        // Helper function to convert hex to rgba
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // Create datasets for each option
+        const datasets = topOptions.map((option, idx) => {
+            const details = data.details[option];
+            const normalizedScores = details.criteria_breakdown.map(cb => cb.normalized_score);
+            const color = colors[idx];
+            
+            console.log(`Option ${option}:`, normalizedScores);
+
+            return {
+                label: option,
+                data: normalizedScores,
+                borderColor: color,
+                backgroundColor: hexToRgba(color, 0.15),
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointBackgroundColor: color,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2.5,
+                pointHoverRadius: 8
+            };
+        });
+
+        // Create chart
+        window.criteriaRadarChart = new Chart(canvas, {
+            type: 'radar',
+            data: {
+                labels: criteria,
+                datasets: datasets
             },
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 1,
-                    title: {
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                    padding: {
+                        top: 30,
+                        bottom: 30,
+                        left: 30,
+                        right: 30
+                    }
+                },
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Normalized Score'
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold',
+                                family: 'Arial, sans-serif'
+                            },
+                            padding: 20,
+                            boxWidth: 15,
+                            boxHeight: 12,
+                            usePointStyle: true,
+                            color: '#333'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                        padding: 14,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        cornerRadius: 6,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + (context.raw * 100).toFixed(1) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 1,
+                        ticks: {
+                            stepSize: 0.2,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            callback: function(value) {
+                                return (value * 100).toFixed(0) + '%';
+                            },
+                            color: '#666',
+                            backdropColor: 'transparent'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 13,
+                                weight: 'bold',
+                                family: 'Arial, sans-serif'
+                            },
+                            padding: 12,
+                            color: '#333'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.08)',
+                            drawBorder: true,
+                            lineWidth: 1.5
+                        },
+                        angleLines: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            lineWidth: 1
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+        
+        console.log('✓ Radar chart created successfully');
+        console.log('=== RADAR CHART END ===');
+    } catch (error) {
+        console.error('❌ Error creating radar chart:', error);
+        console.error('Stack:', error.stack);
+    }
 }
 
 /**
@@ -517,6 +635,186 @@ function resetForm() {
         scores: {}
     };
     backToInput();
+}
+
+/**
+ * Export current evaluation as PDF Report
+ */
+async function exportPDF() {
+    try {
+        console.log('=== PDF EXPORT START ===');
+        
+        // Check if evaluation has been run
+        if (!lastEvaluationResult) {
+            alert('Please evaluate options first before exporting.');
+            return;
+        }
+        
+        // Show loading state
+        const btn = document.getElementById('exportPdfBtn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        // Prepare export data from last evaluation result
+        const exportData = {
+            title: 'Decision Analysis Report',
+            options: state.options,
+            criteria: state.criteria,
+            weights: Object.fromEntries(state.criteria.map((c, i) => [c, state.weights[i]])),
+            scores: lastEvaluationResult.scores || {},
+            ranked_options: lastEvaluationResult.ranked_options || [],
+            details: lastEvaluationResult.details || {},
+            confidence: lastEvaluationResult.confidence || {},
+            explanation: lastEvaluationResult.explanation || {}
+        };
+
+        console.log('Export data prepared:', exportData);
+
+        // Call export endpoint
+        const response = await fetch('/api/export-report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(exportData)
+        });
+
+        console.log('Export response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error('PDF export failed: ' + response.statusText);
+        }
+
+        // Get the blob and trigger download
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'decision_report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+        console.log('✓ PDF exported successfully');
+        
+        // Restore button
+        btn.textContent = originalText;
+        btn.disabled = false;
+        
+    } catch (error) {
+        console.error('❌ Error exporting PDF:', error);
+        alert('Error exporting PDF: ' + error.message);
+        const btn = document.getElementById('exportPdfBtn');
+        btn.textContent = '📄 Export PDF Report';
+        btn.disabled = false;
+    }
+}
+
+/**
+ * Toggle history section visibility and load data if needed
+ */
+async function toggleHistory() {
+    const historySection = document.getElementById('historySection');
+    const historyContainer = document.getElementById('historyContainer');
+    
+    try {
+        if (historySection.style.display === 'none' || historySection.style.display === '') {
+            // Show history section and load data
+            const viewBtn = document.getElementById('viewHistoryBtn');
+            viewBtn.textContent = 'Loading...';
+            viewBtn.disabled = true;
+            
+            const response = await fetch('/api/history');
+            if (!response.ok) {
+                throw new Error('Failed to load history');
+            }
+
+            const data = await response.json();
+            console.log('History data:', data);
+            console.log('Data length:', data.data ? data.data.length : 0);
+
+            if (!data.data || data.data.length === 0) {
+                historyContainer.innerHTML = '<p style="color: #999; padding: 20px;">No decisions saved yet. Evaluate some options to build your history.</p>';
+            } else {
+                // Build history HTML
+                let historyHTML = '';
+                data.data.forEach((item, index) => {
+                    const itemId = item.id || index + 1;
+                    const options = Array.isArray(item.options) ? item.options.join(', ') : item.options;
+                    const bestChoice = item.best_choice || 'N/A';
+                    const score = item.best_score ? (parseFloat(item.best_score) * 100).toFixed(1) : '0';
+                    const timestamp = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown';
+                    
+                    historyHTML += `
+                        <div class="history-item" style="display: block; margin-bottom: 15px; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+                            <h4 style="color: #3b82f6; margin: 0 0 10px 0; font-size: 1em;">Decision #${itemId}</h4>
+                            <div class="history-item-info" style="font-size: 0.9em; color: #666; line-height: 1.6;">
+                                <div><strong>Options:</strong> ${options}</div>
+                                <div><strong>Best Choice:</strong> ${bestChoice}</div>
+                                <div><strong>Score:</strong> ${score}%</div>
+                                <div><strong>Saved:</strong> ${timestamp}</div>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-danger" onclick="deleteHistoryItem('${itemId}')" style="padding: 6px 12px; font-size: 0.85em;">🗑️ Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                historyContainer.innerHTML = historyHTML;
+            }
+
+            historySection.style.display = 'block';
+            historySection.classList.add('visible');
+            viewBtn.textContent = '📋 Hide History';
+            viewBtn.disabled = false;
+        } else {
+            // Hide history section
+            historySection.style.display = 'none';
+            historySection.classList.remove('visible');
+            document.getElementById('viewHistoryBtn').textContent = '📋 View History';
+        }
+    } catch (error) {
+        console.error('❌ Error loading history:', error);
+        historyContainer.innerHTML = '<p style="color: #e74c3c; padding: 20px;">Error loading history: ' + error.message + '</p>';
+        if (historySection.style.display === 'none' || historySection.style.display === '') {
+            historySection.style.display = 'block';
+        }
+        document.getElementById('viewHistoryBtn').textContent = '📋 View History';
+    }
+}
+
+/**
+ * Delete a history item
+ */
+async function deleteHistoryItem(itemId) {
+    if (!confirm('Are you sure you want to delete this decision record?')) {
+        return;
+    }
+
+    try {
+        console.log('Deleting history item:', itemId);
+        
+        const response = await fetch(`/api/history/${itemId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete history');
+        }
+
+        console.log('✓ History item deleted');
+        // Refresh history display
+        await toggleHistory();
+        await toggleHistory();
+        
+    } catch (error) {
+        console.error('❌ Error deleting history:', error);
+        alert('Error deleting history: ' + error.message);
+    }
 }
 
 // Initialize with example data on page load

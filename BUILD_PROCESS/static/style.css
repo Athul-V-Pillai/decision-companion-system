@@ -247,6 +247,102 @@ footer {
     background: #7f8c8d;
 }
 
+.btn-info {
+    background: #3498db;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #2980b9;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+/* History Section */
+#historySection {
+    display: none !important;
+    width: 100%;
+}
+
+#historySection.visible {
+    display: block !important;
+}
+
+/* History Styles */
+.history-container {
+    max-height: 600px;
+    overflow-y: auto;
+    width: 100%;
+    display: block;
+    padding: 10px 0;
+}
+
+.history-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.history-item h4 {
+    color: var(--primary-color);
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    font-weight: bold;
+    display: block;
+}
+
+.history-item-info {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    display: block;
+}
+
+.history-item-info strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.history-item-info div {
+    margin-bottom: 6px;
+    display: block;
+}
+
+.history-item-options {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.history-item-options .btn {
+    padding: 8px 14px;
+    font-size: 0.85em;
+    margin: 0;
+}
+
 /* Results Section */
 .results-section {
     animation: slideIn 0.3s ease;
@@ -254,6 +350,8 @@ footer {
 
 .results-content {
     margin-bottom: 30px;
+    width: 100%;
+    clear: both;
 }
 
 .result-box {
@@ -262,6 +360,8 @@ footer {
     margin-bottom: 25px;
     border-radius: 8px;
     border-left: 5px solid var(--primary-color);
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .result-box h3 {
@@ -421,16 +521,14 @@ footer {
 .chart-container {
     position: relative;
     width: 100%;
-    max-width: 100%;
-    height: auto;
-    min-height: 300px;
-    max-height: 500px;
+    height: 420px;
     background: white;
-    padding: 20px;
+    padding: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
-    overflow: hidden;
+    overflow: visible;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -438,8 +536,11 @@ footer {
 
 .chart-container canvas {
     max-width: 100%;
-    height: auto;
+    width: 100% !important;
+    height: 100% !important;
     display: block;
+    margin: 0;
+    padding: 0;
 }
 
 /* Confidence Score Styles */
@@ -539,8 +640,7 @@ footer {
     }
 
     .chart-container {
-        min-height: 250px;
-        max-height: 400px;
+        height: 380px;
         padding: 15px;
     }
 }
@@ -590,5 +690,10 @@ footer {
 
     .methodology-text {
         font-size: 0.85em;
+    }
+
+    .chart-container {
+        height: 350px;
+        padding: 12px;
     }
 }
