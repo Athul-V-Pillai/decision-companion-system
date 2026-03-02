@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2026-02-28T16:05:09.384336",
+    "input": {
+      "options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "criteria": [
+        "price",
+        "performance",
+        "battery"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "dell": [
+          5,
+          5,
+          5
+        ],
+        "hp": [
+          5,
+          5,
+          5
+        ],
+        "lenovo": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "scores": {
+        "dell": 1.0,
+        "hp": 1.0,
+        "lenovo": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: dell and hp have very similar scores"
+      },
+      "weights": {
+        "price": 0.3333333333333333,
+        "performance": 0.3333333333333333,
+        "battery": 0.3333333333333333
+      }
+    }
+  },
+  {
+    "id": 2,
+    "timestamp": "2026-02-28T16:10:18.072561",
+    "input": {
+      "options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "criteria": [
+        "price",
+        "performance",
+        "battery"
+      ],
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "criterion_types": [
+        "max",
+        "max",
+        "max"
+      ],
+      "scores": {
+        "dell": [
+          5,
+          5,
+          5
+        ],
+        "hp": [
+          5,
+          5,
+          5
+        ],
+        "lenovo": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "result": {
+      "ranked_options": [
+        "dell",
+        "hp",
+        "lenovo"
+      ],
+      "scores": {
+        "dell": 1.0,
+        "hp": 1.0,
+        "lenovo": 1.0
+      },
+      "confidence": {
+        "score": 0.0,
+        "level": "Low",
+        "interpretation": "Close call: dell and hp have very similar scores"
+      },
+      "weights": {
+        "price": 0.3333333333333333,
+        "performance": 0.3333333333333333,
+        "battery": 0.3333333333333333
+      }
+    }
+  }
+]

@@ -69,17 +69,20 @@ def calculate_weighted_scores(options, criteria, normalized_weights, criterion_t
     
     for option in options:
         total_score = 0.0
-        option_scores_list = scores[option]
         
         # For each criterion, calculate normalized score and apply weight
         for criterion_idx, criterion in enumerate(criteria):
+            # Get all scores for this criterion across all options
             criterion_scores = [scores[opt][criterion_idx] for opt in options]
+            # Normalize scores to 0-1 range based on criterion type
             normalized_criterion_scores = normalize_scores(criterion_scores, criterion_types[criterion_idx])
             
+            # Find the index of the current option in the options list
+            option_idx = options.index(option)
             # Get this option's normalized score for this criterion
-            option_norm_score = normalized_criterion_scores[option_scores_list.index(option_scores_list[criterion_idx])]
+            option_norm_score = normalized_criterion_scores[option_idx]
             
-            # Apply weight
+            # Apply weight and accumulate
             weighted_contrib = normalized_weights[criterion_idx] * option_norm_score
             total_score += weighted_contrib
         
@@ -105,6 +108,7 @@ def evaluate_options(data):
             - ranked_options (list): Options sorted by score (best first)
             - scores (dict): Total score for each option
             - details (dict): Detailed breakdown per option
+            - confidence (dict): Confidence metrics (score, level)
     """
     options = data['options']
     criteria = data['criteria']
@@ -123,7 +127,10 @@ def evaluate_options(data):
     # Step 3: Rank options
     ranked_options = sorted(options, key=lambda opt: weighted_scores[opt], reverse=True)
     
-    # Step 4: Build details for explanation
+    # Step 4: Calculate confidence score (top_score - second_best_score)
+    confidence = _calculate_confidence(ranked_options, weighted_scores)
+    
+    # Step 5: Build details for explanation
     details = _build_evaluation_details(
         options, criteria, normalized_weights, criterion_types, scores, weighted_scores
     )
@@ -132,7 +139,55 @@ def evaluate_options(data):
         'ranked_options': ranked_options,
         'scores': weighted_scores,
         'details': details,
-        'weights': {crit: weight for crit, weight in zip(criteria, normalized_weights)}
+        'weights': {crit: weight for crit, weight in zip(criteria, normalized_weights)},
+        'confidence': confidence
+    }
+
+
+def _calculate_confidence(ranked_options, weighted_scores):
+    """
+    Calculate confidence score based on score gap between top and second-best option.
+    
+    Confidence formula: top_score - second_best_score
+    
+    Confidence levels:
+    - High: >= 0.2
+    - Medium: >= 0.1
+    - Low: < 0.1
+    
+    Args:
+        ranked_options (list): Options ranked by score (best first)
+        weighted_scores (dict): Score for each option
+    
+    Returns:
+        dict: Confidence metrics with score, level, and interpretation
+    """
+    if len(ranked_options) < 2:
+        # Only one option; always high confidence
+        return {
+            'score': 1.0,
+            'level': 'High',
+            'interpretation': 'Only one option available'
+        }
+    
+    top_score = weighted_scores[ranked_options[0]]
+    second_score = weighted_scores[ranked_options[1]]
+    confidence_score = top_score - second_score
+    
+    if confidence_score >= 0.2:
+        level = 'High'
+        interpretation = f'Clear winner: {ranked_options[0]} significantly outperforms other options'
+    elif confidence_score >= 0.1:
+        level = 'Medium'
+        interpretation = f'Good choice: {ranked_options[0]} is a solid option, but alternatives remain viable'
+    else:
+        level = 'Low'
+        interpretation = f'Close call: {ranked_options[0]} and {ranked_options[1]} have very similar scores'
+    
+    return {
+        'score': round(confidence_score, 4),
+        'level': level,
+        'interpretation': interpretation
     }
 
 

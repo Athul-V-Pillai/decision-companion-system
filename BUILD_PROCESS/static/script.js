@@ -1,6 +1,6 @@
 /**
  * Decision Companion System - Frontend JavaScript
- * Handles form generation, API calls, and result display
+ * Handles form generation, API calls, result display, and chart visualizations
  */
 
 // State management
@@ -10,6 +10,19 @@ let state = {
     weights: [],
     criterionTypes: [],
     scores: {}
+};
+
+// Chart instances for cleanup
+let scoresBarChart = null;
+let criteriaRadarChart = null;
+
+// Color palette for charts
+const chartColors = {
+    primary: '#3b82f6',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    info: '#06b6d4'
 };
 
 // DOM Elements
@@ -236,6 +249,15 @@ function displayResults(data) {
     document.getElementById('recommendationText').innerHTML = 
         explanation.recommendation.replace(/\n/g, '<br/>');
 
+    // Confidence Score
+    const confidenceData = data.confidence;
+    const confidenceContainer = document.getElementById('confidenceContainer');
+    confidenceContainer.innerHTML = `
+        <p><strong>Confidence Score:</strong> ${confidenceData.score.toFixed(4)}</p>
+        <p><strong>Level:</strong> <span class="confidence-${confidenceData.level.toLowerCase()}">${confidenceData.level}</span></p>
+        <p><em>${confidenceData.interpretation}</em></p>
+    `;
+
     // Scores table
     const tbody = document.getElementById('scoresTableBody');
     tbody.innerHTML = '';
@@ -307,6 +329,148 @@ function displayResults(data) {
             <p>${item.weaknesses}</p>
         `;
         rankingDiv.appendChild(div);
+    });
+
+    // Create visualizations
+    createScoresBarChart(data);
+    createCriteriaRadarChart(data);
+}
+
+/**
+ * Create bar chart showing total scores per option
+ */
+function createScoresBarChart(data) {
+    // Destroy existing chart if it exists
+    if (scoresBarChart) {
+        scoresBarChart.destroy();
+    }
+
+    const ctx = document.getElementById('scoresBarChart');
+    if (!ctx) return;
+
+    const options = data.ranked_options;
+    const scores = options.map(opt => data.scores[opt]);
+
+    // Generate colors for bars
+    const barColors = options.map((_, index) => {
+        const colorValues = Object.values(chartColors);
+        return colorValues[index % colorValues.length];
+    });
+
+    scoresBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: options,
+            datasets: [{
+                label: 'Total Score',
+                data: scores,
+                backgroundColor: barColors,
+                borderColor: barColors.map(color => color.replace(')', ', 0.8)')),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 1,
+                    title: {
+                        display: true,
+                        text: 'Score (0-1)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Options'
+                    }
+                }
+            }
+        }
+    });
+}
+
+/**
+ * Create radar chart comparing criteria performance across top options
+ */
+function createCriteriaRadarChart(data) {
+    // Destroy existing chart if it exists
+    if (criteriaRadarChart) {
+        criteriaRadarChart.destroy();
+    }
+
+    const ctx = document.getElementById('criteriaRadarChart');
+    if (!ctx) return;
+
+    // Get top 3 options (or fewer if less available)
+    const topOptions = data.ranked_options.slice(0, 3);
+    
+    // Extract criteria names from details
+    const firstDetails = data.details[topOptions[0]];
+    const criteria = firstDetails.criteria_breakdown.map(cb => cb.criterion);
+
+    // Create dataset for each top option showing normalized scores per criterion
+    const datasets = topOptions.map((option, index) => {
+        const details = data.details[option];
+        const normalizedScores = details.criteria_breakdown.map(cb => cb.normalized_score);
+        
+        const colorValues = Object.values(chartColors);
+        const color = colorValues[index % colorValues.length];
+
+        return {
+            label: option,
+            data: normalizedScores,
+            borderColor: color,
+            backgroundColor: color.replace(')', ', 0.1)'),
+            borderWidth: 2,
+            fill: true,
+            pointRadius: 5,
+            pointBackgroundColor: color,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+        };
+    });
+
+    criteriaRadarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: criteria,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 1,
+                    title: {
+                        display: true,
+                        text: 'Normalized Score'
+                    }
+                }
+            }
+        }
     });
 }
 

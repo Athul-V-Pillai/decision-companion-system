@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decision Companion System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -77,7 +79,7 @@
                         <div id="recommendationText" class="recommendation-box"></div>
                     </div>
 
-                    <!-- Scores Table -->
+                    <!-- Final Scores Table -->
                     <div class="result-box">
                         <h3>Final Scores</h3>
                         <table class="scores-table">
@@ -92,6 +94,30 @@
                                 <!-- Will be populated dynamically -->
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Confidence Score -->
+                    <div class="result-box">
+                        <h3>Decision Confidence</h3>
+                        <div id="confidenceContainer" class="confidence-box">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Bar Chart: Total Scores per Option -->
+                    <div class="result-box">
+                        <h3>Scores Comparison (Bar Chart)</h3>
+                        <div class="chart-container">
+                            <canvas id="scoresBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Radar Chart: Criteria Comparison -->
+                    <div class="result-box">
+                        <h3>Criteria Analysis (Radar Chart)</h3>
+                        <div class="chart-container">
+                            <canvas id="criteriaRadarChart"></canvas>
+                        </div>
                     </div>
 
                     <!-- Detailed Breakdown -->

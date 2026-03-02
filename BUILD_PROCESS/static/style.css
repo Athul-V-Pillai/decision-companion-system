@@ -417,6 +417,60 @@ footer {
     color: var(--success-color);
 }
 
+/* Chart Container Styles */
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 300px;
+    max-height: 500px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Confidence Score Styles */
+.confidence-box {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    border-left: 4px solid #3b82f6;
+    line-height: 1.8;
+}
+
+.confidence-box p {
+    margin: 8px 0;
+    font-size: 1.05em;
+}
+
+.confidence-high {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.confidence-medium {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.confidence-low {
+    color: #ef4444;
+    font-weight: 600;
+}
+
 /* Error Section */
 .error-section {
     animation: slideIn 0.3s ease;
@@ -481,6 +535,12 @@ footer {
     .detail-item,
     .ranking-item,
     .result-box {
+        padding: 15px;
+    }
+
+    .chart-container {
+        min-height: 250px;
+        max-height: 400px;
         padding: 15px;
     }
 }
